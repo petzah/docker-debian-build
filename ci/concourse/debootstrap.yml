@@ -1,4 +1,9 @@
 ---
+params:
+  TARCH: ((TARCH))
+  TSUITE: ((TSUITE))
+  TVARIANT: ((TVARIANT))
+
 outputs:
   - name: out-build
 
