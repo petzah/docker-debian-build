@@ -18,13 +18,13 @@ run:
   args:
   - -exc
   - |
-    echo 'Acquire::http::proxy "http://cache.znik.lan:3142";' > /etc/apt/apt.conf.d/02proxy
+    #echo 'Acquire::http::proxy "http://cache.znik.lan:3142";' > /etc/apt/apt.conf.d/02proxy
     echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/02recommends
     echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/02recommends
     /usr/bin/apt-get update
     /usr/bin/apt-get install --yes debootstrap binfmt-support qemu-user-static eatmydata
     mkdir -p out-build/rootfs
-    /usr/bin/eatmydata /usr/sbin/debootstrap --arch=${TARCH} --variant=${TVARIANT} ${TSUITE} out-build/rootfs http://cache.znik.lan:3142/ftp.uk.debian.org/debian/
+    /usr/bin/eatmydata /usr/sbin/debootstrap --arch=${TARCH} --variant=${TVARIANT} ${TSUITE} out-build/rootfs #http://cache.znik.lan:3142/ftp.uk.debian.org/debian/
     cat  << EOF > "out-build/Dockerfile"
     FROM scratch
     COPY rootfs/ /
