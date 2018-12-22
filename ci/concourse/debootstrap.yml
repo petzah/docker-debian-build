@@ -1,9 +1,4 @@
 ---
-params:
-  TARCH: ((TARCH))
-  TSUITE: ((TSUITE))
-  TVARIANT: ((TVARIANT))
-
 outputs:
   - name: out-build
 
@@ -22,9 +17,9 @@ run:
     echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/02recommends
     echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/02recommends
     /usr/bin/apt-get update
-    /usr/bin/apt-get install --yes debootstrap binfmt-support qemu-user-static eatmydata
+    /usr/bin/apt-get install --yes debootstrap binfmt-support qemu-user-static
     mkdir -p out-build/rootfs
-    /usr/bin/eatmydata /usr/sbin/debootstrap --arch=${TARCH} --variant=${TVARIANT} ${TSUITE} out-build/rootfs #http://cache.znik.lan:3142/ftp.uk.debian.org/debian/
+    /usr/sbin/debootstrap --arch=${TARCH} --variant=${TVARIANT} ${TSUITE} out-build/rootfs #http://cache.znik.lan:3142/ftp.uk.debian.org/debian/
     cat  << EOF > "out-build/Dockerfile"
     FROM scratch
     COPY rootfs/ /
