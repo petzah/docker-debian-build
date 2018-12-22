@@ -25,6 +25,8 @@ run:
     /usr/bin/apt-get install --yes debootstrap binfmt-support qemu-user-static
     mkdir -p out-build/rootfs
     /usr/sbin/debootstrap --arch=${TARCH} --variant=${TVARIANT} ${TSUITE} out-build/rootfs #http://cache.znik.lan:3142/ftp.uk.debian.org/debian/
+    echo "${TARCH}-${TSUITE}-${TVARIANT}" > tag.txt
+    echo "${TARCH}-${TSUITE}-${TVARIANT}" > out-build/tag.txt
     cat  << EOF > "out-build/Dockerfile"
     FROM scratch
     COPY rootfs/ /
