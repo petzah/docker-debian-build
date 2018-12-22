@@ -1,52 +1,32 @@
 ---
-resources:
-- name: docker-image_debian-build
-  type: docker-image
-  source:
-    email: ((docker-hub-email))
-    username: ((docker-hub-username))
-    password: ((docker-hub-password))
-    repository: ((docker-hub-username))/docker-debian-build
-    tag: ((TARCH))-((TSUITE))-((TVARIANT))
-
-jobs:
-- name: build-debian-docker
-  plan:
-    - task: debootstrap
-      privileged: true
-      params:
-        TARCH: ((TARCH))
-        TSUITE: ((TSUITE))
-        TVARIANT: ((TVARIANT))
-      config:
-        outputs:
-          - name: out-build
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: debian
-            tag: buster-slim
-        run:
-          path: /bin/bash
-          args:
-            - -exc
-            - |
-              echo 'Acquire::http::proxy "http://cache.znik.lan:3142";' > /etc/apt/apt.conf.d/02proxy
-              echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/02recommends
-              echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/02recommends
-              /usr/bin/apt-get update
-              /usr/bin/apt-get install --yes debootstrap binfmt-support qemu-user-static eatmydata
-              mkdir -p out-build/rootfs
-              /usr/bin/eatmydata /usr/sbin/debootstrap --arch=${TARCH} --variant=${TVARIANT} ${TSUITE} out-build/rootfs http://cache.znik.lan:3142/ftp.uk.debian.org/debian/
-              cat  << EOF > "out-build/Dockerfile"
-              FROM scratch
-              COPY rootfs/ /
-              CMD ["/bin/bash"]
-              EOF
-
-    - put: docker-image_debian-build
-      params:
-        build: out-build
-      get_params:
-        skip_download: true
+privileged: true
+params:
+  TARCH: ((TARCH))
+  TSUITE: ((TSUITE))
+  TVARIANT: ((TVARIANT))
+config:
+  outputs:
+    - name: out-build
+  platform: linux
+  image_resource:
+    type: docker-image
+    source:
+      repository: debian
+      tag: testing-slim
+  run:
+    path: /bin/bash
+    args:
+    - -exc
+    - |
+      echo 'Acquire::http::proxy "http://cache.znik.lan:3142";' > /etc/apt/apt.conf.d/02proxy
+      echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/02recommends
+      echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/02recommends
+      /usr/bin/apt-get update
+      /usr/bin/apt-get install --yes debootstrap binfmt-support qemu-user-static eatmydata
+      mkdir -p out-build/rootfs
+      /usr/bin/eatmydata /usr/sbin/debootstrap --arch=${TARCH} --variant=${TVARIANT} ${TSUITE} out-build/rootfs http://cache.znik.lan:3142/ftp.uk.debian.org/debian/
+      cat  << EOF > "out-build/Dockerfile"
+      FROM scratch
+      COPY rootfs/ /
+      CMD ["/bin/bash"]
+      EOF
